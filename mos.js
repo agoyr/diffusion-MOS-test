@@ -64,22 +64,30 @@ function deriveIdFromUrl(url) {
 }
 
 function parseLine(line) {
-  // prefer TSV, but allow comma-separated if needed
+  // TSV優先。ダメならCSVとして読む（保険）
   let parts = line.split("\t");
   if (parts.length < 2) parts = line.split(",");
-  parts = parts.map((p) => p.trim()).filter((p) => p.length > 0);
+  parts = parts.map((p) => p.trim());
 
   if (parts.length < 2) {
     throw new Error(`Invalid line (need at least 2 columns): ${line}`);
   }
 
   const conv = parts[0];
-  const tgt = parts[1];
-  const id = parts[2] ? parts[2] : deriveIdFromUrl(conv);
-  const meta = parts.slice(3).join(" ");
+  const tgt  = parts[1];
+  const id   = parts[2] ? parts[2] : deriveIdFromUrl(conv);
 
-  return { conv, tgt, id, meta };
+  // B方式：system/pairを独立列として保持
+  const system = parts[3] ? parts[3] : "";
+  const pair   = parts[4] ? parts[4] : "";
+
+  // 6列目以降があれば自由メモとして残す（任意）
+  const meta = parts.slice(5).join(" ");
+
+  return { conv, tgt, id, system, pair, meta };
 }
+
+
 
 async function makeFileList(listPath) {
   const lines = await loadText(listPath);
@@ -173,22 +181,14 @@ function init() {
 
 // ---------- export ----------
 function exportCSV() {
-  // header + rows
-  // columns: idx, sample_id, conv_url, tgt_url, naturalness, similarity, meta
-  let csvData = "idx,sample_id,conv_url,tgt_url,naturalness,similarity,meta\r\n";
+  // columns: idx, sample_id, system, pair, conv_url, tgt_url, naturalness, similarity, meta
+  let csvData = "idx,sample_id,system,pair,conv_url,tgt_url,naturalness,similarity,meta\r\n";
+
   for (let i = 0; i < file_list.length; i++) {
     const s = file_list[i];
-    const row = [
-      i + 1,
-      s.id,
-      s.conv,
-      s.tgt,
-      nat_scores[i] || "",
-      sim_scores[i] || "",
-      (s.meta || "").replaceAll('"', '""'),
-    ];
-    // quote meta to be safe
-    csvData += `${row[0]},${row[1]},${row[2]},${row[3]},${row[4]},${row[5]},"${row[6]}"\r\n`;
+    const metaSafe = (s.meta || "").replaceAll('"', '""');
+
+    csvData += `${i + 1},${s.id},${s.system || ""},${s.pair || ""},${s.conv},${s.tgt},${nat_scores[i] || ""},${sim_scores[i] || ""},"${metaSafe}"\r\n`;
   }
 
   const link = document.createElement("a");
@@ -202,6 +202,7 @@ function exportCSV() {
   window.URL.revokeObjectURL(url);
   link.parentNode.removeChild(link);
 }
+
 
 function next() {
   if (n < file_list.length - 1) {
