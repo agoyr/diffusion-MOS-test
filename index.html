@@ -1,102 +1,98 @@
 <!DOCTYPE html>
-
 <html>
-
 <head>
-    <meta charset="UTF-8">
-    <title>Accentedness test for IS2023 submissio</title>
+  <meta charset="UTF-8">
+  <title>VC Subjective Evaluation (Naturalness & Similarity)</title>
 </head>
 
 <body>
 
-    <!-- 注意書きなど -->
-    <div style="border:1px solid #000000; padding: 10px; border-radius: 0px; background: #ffffff;">
-        <p>
-        <h1>Accentedness test for IS2023 submission</h1>
+  <div style="border:1px solid #000000; padding:10px; background:#ffffff;">
+    <h1>VC Subjective Evaluation</h1>
 
-        <h2>Experimental Procedure</h2>
-        <ol>
-            <li>Enter your name and select the set list number (choose any number you like).</li>
-            <li>Press "Start Experiment" button.</li>
-            <li>Listen to the speech samples and rate the <b>accentedness</b>.</li>
-            <li>Press "next" button and start next evaluation.</li>
-            <li>When you finish this experiment, press "finish" button and download the result.<br>
-                Send it to Wen-Chin on slack or the following email address.</li>
-            <li>Email address: wen.chinhuang@g.sp.m.is.nagoya-u.ac.jp</font>
-            </li>
-        </ol>
-
-        <h2>Notes</h2>
+    <h2>Procedure</h2>
+    <ol>
+      <li>Enter your name and choose setlist A or B.</li>
+      <li>Press "Start".</li>
+      <li>For each sample:
         <ul>
-            <li>This experiment takes no more than 10 minutes.</li>
-            <li>Please do not update the page during this experiment.</li>
-            <li>You may not be able to download the results on your phone, so please use your PC.</li>
-            <li>Please use headphones for this experiment.</li>
+          <li>Listen to the <b>Target speaker (reference)</b> and the <b>Converted speech</b>.</li>
+          <li>Rate the converted speech on:
+            <b>Naturalness</b> and <b>Speaker Similarity</b> (1–5).</li>
         </ul>
+      </li>
+      <li>Press "Next" to proceed. On the last page, press "Finish" to download CSV.</li>
+    </ol>
 
-        <!-- <h2>実験手順</h2>
-        <ol>
-            <li>名前を入力し、1から10までのセット番号を選んで下さい。</li>
-            <li>"Start Experiment"を押して下さい。</li>
-            <li>音声を聴き、相応しいと思った評価を選択して下さい。<br>
-                評価基準は<b>音質</b>です。</li>
-            <li>選択を終えたら"next"ボタンを押し、次の実験に進んで下さい。</li>
-            <li>評価実験を全て終えたら"finish"ボタンを押して結果をダウンロードして下さい。<br>
-                結果はSlackか下記のメールアドレスに送信して下さい。</li>
-            <li>Emailアドレス: authors_email@address</font>
-            </li>
-        </ol>
+    <h2>Notes</h2>
+    <ul>
+      <li>Please use headphones.</li>
+      <li>Do not refresh the page during the experiment.</li>
+      <li>This experiment is designed to take about 20–30 minutes.</li>
+    </ul>
+  </div>
 
-        <h2>注意</h2>
-        <ul>
-            <li>この実験は凡そ30分ほど要します。</li>
-            <li>実験中はページの再読み込みは行わないで下さい。</li>
-            <li>スマートフォンでは結果をダウンロードできない場合があるのでPCを使用して下さい。</li>
-            <li>ヘッドホンやイヤホンを着用した状態で行って下さい。</li>
-        </ul> -->
-        </p>
+  <script type="text/javascript" src="mos.js"></script>
+
+  <div id="Display1">
+    <p>Your name:<br>
+      <input type="text" id="name" value="">
+    </p>
+
+    <p>Setlist:<br>
+        <label><input type="radio" name="set" value="A">A</label><br>
+        <label><input type="radio" name="set" value="B">B</label><br>
+        <label><input type="radio" name="set" value="C">C</label><br>
+    </p>
+
+
+    <p>
+      <button id="next1" onclick="start_experiment()">Start</button>
+    </p>
+
+    <p id="loading" style="display:none;">
+      Loading setlist... please wait.
+    </p>
+  </div>
+
+  <div id="Display2" style="display:none;">
+    <p id="page"></p>
+    <p id="sample_id"></p>
+    <p id="meta" style="color:#666;"></p>
+
+    <div style="border:1px solid #ccc; padding:10px; margin-bottom:10px;">
+      <p id="audio_tgt"></p>
+      <p id="audio_conv"></p>
     </div>
 
-    <script type="text/javascript" src="mos.js"></script>
-
-    <div id="Display1">
-        <p> Your name: <br>
-            <input type="text" id="name" value="">
-        </p>
-        <p> Setlist number: <br>
-            <label><input type="radio" name="set" id="number" value="1">1</label><br>
-            <label><input type="radio" name="set" id="number" value="2">2</label><br>
-            <label><input type="radio" name="set" id="number" value="3">3</label><br>
-            <label><input type="radio" name="set" id="number" value="4">4</label><br>
-        <p>
-            <button id="next1" onclick="start_experiment()">next</button>
-        </p>
+    <div style="border:1px solid #ccc; padding:10px; margin-bottom:10px;">
+      <h3>Naturalness (Converted speech)</h3>
+      <p>
+        <label><input type="radio" name="nat" value="1" onclick="evaluation()">1 (Very unnatural)</label><br>
+        <label><input type="radio" name="nat" value="2" onclick="evaluation()">2</label><br>
+        <label><input type="radio" name="nat" value="3" onclick="evaluation()">3</label><br>
+        <label><input type="radio" name="nat" value="4" onclick="evaluation()">4</label><br>
+        <label><input type="radio" name="nat" value="5" onclick="evaluation()">5 (Very natural)</label><br>
+      </p>
     </div>
 
+    <div style="border:1px solid #ccc; padding:10px; margin-bottom:10px;">
+      <h3>Speaker Similarity (Converted speech vs Target reference)</h3>
+      <p>
+        <label><input type="radio" name="sim" value="1" onclick="evaluation()">1 (Very different speaker)</label><br>
+        <label><input type="radio" name="sim" value="2" onclick="evaluation()">2</label><br>
+        <label><input type="radio" name="sim" value="3" onclick="evaluation()">3</label><br>
+        <label><input type="radio" name="sim" value="4" onclick="evaluation()">4</label><br>
+        <label><input type="radio" name="sim" value="5" onclick="evaluation()">5 (Very similar speaker)</label><br>
+      </p>
+    </div>
 
-    <div id="Display2" style="display:none;">
-        <!-- 注意書きなど <body onload="init()"> -->
-        <p id="page"></p>
-        <p id="audio"></p>
-        <p>
-            <label><input type="radio" name="eval" onclick="evaluation()">1 (no foriegn accent)</label><br>
-            <label><input type="radio" name="eval" onclick="evaluation()">2</label><br>
-            <label><input type="radio" name="eval" onclick="evaluation()">3</label><br>
-            <label><input type="radio" name="eval" onclick="evaluation()">4</label><br>
-            <label><input type="radio" name="eval" onclick="evaluation()">5</label><br>
-            <label><input type="radio" name="eval" onclick="evaluation()">6</label><br>
-            <label><input type="radio" name="eval" onclick="evaluation()">7</label><br>
-            <label><input type="radio" name="eval" onclick="evaluation()">8</label><br>
-            <label><input type="radio" name="eval" onclick="evaluation()">9 (heavy foriegn accent)</label><br>
-        </p>
-
-        <p>
-            <button id="prev" onclick="prev()">prev</button>
-            <button id="next2" onclick="next()">next</button>
-            <button id="finish" onclick="finish()">finish</button>
-        </p>
-
+    <p>
+      <button id="prev" onclick="prev()">Prev</button>
+      <button id="next2" onclick="next()">Next</button>
+      <button id="finish" onclick="finish()">Finish (Download CSV)</button>
+    </p>
+  </div>
 
 </body>
-
 </html>
