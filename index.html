@@ -36,25 +36,28 @@
       <h1>音声変換 主観評価（自然性・話者類似度）</h1>
 
       <p class="note">
-        このページでは、各項目で <b>2つの音声</b>（ターゲット参照 / 変換後音声）を聴き、
-        <b>変換後音声</b>について <b>自然性</b> と <b>話者類似度</b> を <b>1〜5の5段階</b>で評価します。
+        このページでは、各項目で <b>2つの音声</b>（<b>参照音声</b> / <b>評価音声</b>）を聴き、
+        <b>評価音声</b>について <b>自然性</b> と <b>話者類似度</b> を <b>1〜5の5段階</b>で評価します。
         正解はありません。<b>直感で大丈夫</b>です。
+      </p>
+      <p class="small">
+        ※ 用語の定義：ターゲット話者の音声を<b>参照音声</b>、変換後音声を<b>評価音声</b>と呼びます。
       </p>
 
       <h2>評価方法</h2>
       <div class="row">
         <div class="helpBox">
-          <h3>① 自然性（変換後音声）</h3>
+          <h3>① 自然性（評価音声）</h3>
           <ul>
             <li>音として自然か（ノイズ・歪み・ブツ切れ・不連続さが少ないか）</li>
             <li>発話として滑らかか（不自然な抑揚、急な音量変化などがないか）</li>
           </ul>
-          <p class="small">※ 参照音声の自然性は評価しません（参照は「比較の基準」です）。</p>
+          <p class="small">※ 参照音声の自然性は評価しません（参照音声は「比較の基準」です）。</p>
         </div>
         <div class="helpBox">
-          <h3>② 話者類似度（変換後音声 vs ターゲット参照）</h3>
+          <h3>② 話者類似度（評価音声 vs 参照音声）</h3>
           <ul>
-            <li>声質・声色が、参照（ターゲット話者）にどれだけ近いか</li>
+            <li>声質・声色が、参照音声（ターゲット話者）にどれだけ近いか</li>
             <li>話し方（癖）や響きが似ていると感じるか</li>
           </ul>
           <p class="small">※ 内容（言葉の正しさ）より「誰の声に聞こえるか」を重視してください。</p>
@@ -65,11 +68,10 @@
       <ol>
         <li><b>名前</b>を入力し、<b>セットリスト（A/B/C）</b>を選んでください。</li>
         <li><b>開始</b>を押すと、評価ページに移動します。</li>
-        <li>各ページで <b>ターゲット参照</b> と <b>変換後音声</b> を聴いてください。何度聞いても大丈夫です。</li>
+        <li>各ページで <b>参照音声</b> と <b>評価音声</b> を聴いてください。何度聞いても大丈夫です。</li>
         <li><b>自然性</b> と <b>話者類似度</b> を5段階から選ぶと <b>次へ</b> が押せます。</li>
         <li>最後のページで <b>終了（CSVダウンロード）</b> を押して結果をダウンロードしてください。</li>
         <li>結果（CSV）は Slack 等のDM、または下記メールアドレス宛に送付してください：<code>yamauchi.ryoga.w2@s.mail.nagoya-u.ac.jp</code></li>
-
       </ol>
 
       <h2>注意</h2>
@@ -90,7 +92,8 @@
 
       <p>
         <b>名前</b><br />
-        <input type="text" id="name" value=""  style="width: min(420px, 100%); padding: 10px; border-radius: 10px; border: 1px solid #bbb;">
+        <input type="text" id="name" value="" placeholder="例: ryoga01"
+          style="width: min(420px, 100%); padding: 10px; border-radius: 10px; border: 1px solid #bbb;">
         <br><span class="small">※ ダウンロードされるCSVファイル名に使われます</span>
       </p>
 
@@ -124,7 +127,7 @@
           </div>
           <div>
             <span class="pill" id="page"></span>
-            <span class="pill">このページは <b>参照 → 評価対象</b> の順に聴いてください</span>
+            <span class="pill">このページは <b>参照音声 → 評価音声</b> の順に聴いてください</span>
           </div>
         </div>
         <div style="text-align:right;">
@@ -138,8 +141,8 @@
       <div class="helpBox" style="margin-top:12px;">
         <b>このページでやること</b>
         <ol style="margin: 8px 0 0 18px;">
-          <li><b>ターゲット話者（参照音声）</b>を聴く</li>
-          <li><b>変換後音声（評価対象）</b>を聴く</li>
+          <li><b>参照音声</b>（ターゲット話者）を聴く</li>
+          <li><b>評価音声</b>（変換後音声）を聴く</li>
           <li>下の2つを<b>それぞれ1〜5</b>で選ぶ</li>
         </ol>
       </div>
@@ -150,7 +153,7 @@
       </div>
 
       <div style="border:1px solid #ddd; border-radius:12px; padding:12px; margin-bottom:12px;">
-        <h3 style="margin-top:0;">自然性（変換後音声）</h3>
+        <h3 style="margin-top:0;">自然性（評価音声）</h3>
         <p class="small">1: とても不自然（ノイズ/歪み/ブツ切れが目立つ）〜 5: とても自然</p>
         <div class="radioGroup">
           <label><input type="radio" name="nat" value="1" onclick="evaluation()"> 1（とても不自然）</label>
@@ -162,7 +165,7 @@
       </div>
 
       <div style="border:1px solid #ddd; border-radius:12px; padding:12px; margin-bottom:12px;">
-        <h3 style="margin-top:0;">話者類似度（変換後音声 vs ターゲット参照）</h3>
+        <h3 style="margin-top:0;">話者類似度（評価音声 vs 参照音声）</h3>
         <p class="small">1: 全く似ていない 〜 5: とても似ている</p>
         <div class="radioGroup">
           <label><input type="radio" name="sim" value="1" onclick="evaluation()"> 1（全く似ていない）</label>

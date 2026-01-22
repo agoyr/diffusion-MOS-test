@@ -112,11 +112,11 @@ function setAudio() {
 
   // audio
   document.getElementById("audio_tgt").innerHTML =
-    `<b>ターゲット話者（参照音声）</b><br>` +
+    `<b>参照音声（ターゲット話者）</b><br>` +
     `<audio src="${cur.tgt}" controls preload="auto" playsinline controlsList="nodownload"></audio>`;
 
   document.getElementById("audio_conv").innerHTML =
-    `<b>変換後音声（評価対象）</b><br>` +
+    `<b>評価音声（変換後音声）</b><br>` +
     `<audio src="${cur.conv}" controls preload="auto" playsinline controlsList="nodownload"></audio>`;
 
   // metaは非表示（system/pair等が見えるとバイアス）
