@@ -38,6 +38,9 @@ let n = 0;
 let nat_radios = [];
 let sim_radios = [];
 
+// 「誤って更新/閉じる」を減らすためのガード
+let experiment_started = false;
+
 // ---------- load list ----------
 async function loadText(filename) {
   const resp = await fetch(filename, { cache: "no-store" });
@@ -96,23 +99,30 @@ function Display() {
   document.getElementById("Display2").style.display = "block";
 }
 
+function updateProgress() {
+  const total = file_list.length || 1;
+  const ratio = (n + 1) / total;
+  const bar = document.getElementById("progressBar");
+  if (bar) bar.style.width = `${Math.max(0, Math.min(1, ratio)) * 100}%`;
+}
+
 function setAudio() {
   const cur = file_list[n];
   document.getElementById("page").textContent = `${n + 1}/${file_list.length}`;
 
-  // NOTE: sample名(id)は表示しない（バイアス防止）
-  // document.getElementById("sample_id").textContent = `Sample: ${cur.id}`;
-
+  // audio
   document.getElementById("audio_tgt").innerHTML =
     `<b>ターゲット話者（参照音声）</b><br>` +
-    `<audio src="${cur.tgt}" controls preload="auto"></audio>`;
+    `<audio src="${cur.tgt}" controls preload="auto" playsinline controlsList="nodownload"></audio>`;
 
   document.getElementById("audio_conv").innerHTML =
     `<b>変換後音声（評価対象）</b><br>` +
-    `<audio src="${cur.conv}" controls preload="auto"></audio>`;
+    `<audio src="${cur.conv}" controls preload="auto" playsinline controlsList="nodownload"></audio>`;
 
-  // metaも表示しない（system/pair等が見えるとバイアスになる可能性）
+  // metaは非表示（system/pair等が見えるとバイアス）
   document.getElementById("meta").textContent = "";
+
+  updateProgress();
 }
 
 function clearRadios(radios) {
@@ -214,16 +224,21 @@ function prev() {
 }
 
 function finish() {
+  const ok = confirm("CSVをダウンロードして終了します。よろしいですか？");
+  if (!ok) return;
   exportCSV();
+  experiment_started = false; // 終了したのでガード解除
 }
 
 // ---------- start experiment ----------
 async function start_experiment() {
-  const name = document.getElementById("name").value.trim().replaceAll(" ", "_");
-  if (!name) {
+  // 参加者ID（ファイル名に使うので安全化）
+  const raw = document.getElementById("name").value.trim();
+  if (!raw) {
     alert("名前を入力してください。");
     return;
   }
+  const name = raw.replaceAll(" ", "_").replace(/[^\w\-]/g, "_"); // 日本語等は _ にする
 
   let set_key = "";
   const radios = document.getElementsByName("set");
@@ -235,11 +250,14 @@ async function start_experiment() {
     return;
   }
 
-  document.getElementById("loading").style.display = "block";
+  // loading表示（ここはDisplay切替より前に見える必要がある）
+  const loading = document.getElementById("loading");
+  const startBtn = document.getElementById("next1");
+  loading.style.display = "inline-block";
+  startBtn.disabled = true;
 
   try {
-    Display();
-
+    // まずリストを読み込む（読み込み中はDisplay1のまま）
     file_list = await makeFileList(SETLIST_MAP[set_key]);
 
     nat_scores = new Array(file_list.length).fill(0);
@@ -248,14 +266,27 @@ async function start_experiment() {
     const ts = new Date().toISOString().replaceAll(":", "").replaceAll("-", "").slice(0, 15);
     outfile = `${name}_set${set_key}_${ts}.csv`;
 
-    document.getElementById("loading").style.display = "none";
+    // 準備できたら評価画面へ
+    Display();
     init();
+
+    // 誤更新ガードON
+    experiment_started = true;
   } catch (e) {
-    document.getElementById("loading").style.display = "none";
     alert(String(e));
     console.error(e);
+  } finally {
+    loading.style.display = "none";
+    startBtn.disabled = false;
   }
 }
 
 // bind
 document.onkeypress = invalid_enter;
+
+// 誤って閉じる/更新するのを減らす（参加者が迷子になりがちなポイント）
+window.addEventListener("beforeunload", (e) => {
+  if (!experiment_started) return;
+  e.preventDefault();
+  e.returnValue = "";
+});

@@ -1,103 +1,189 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>音声変換 主観評価（自然性・話者類似度）</title>
+  <style>
+    body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; line-height: 1.6; margin: 0; background: #f6f7f9; }
+    .container { max-width: 920px; margin: 0 auto; padding: 18px; }
+    .card { background: #fff; border: 1px solid #ddd; border-radius: 12px; padding: 16px; margin: 14px 0; }
+    h1 { font-size: 22px; margin: 0 0 10px; }
+    h2 { font-size: 18px; margin: 18px 0 8px; }
+    h3 { font-size: 16px; margin: 14px 0 8px; }
+    .note { color: #444; font-size: 14px; }
+    .warn { color: #8a1f1f; font-size: 14px; }
+    .row { display: flex; gap: 12px; flex-wrap: wrap; }
+    .row > div { flex: 1; min-width: 260px; }
+    .btn { padding: 10px 14px; border-radius: 10px; border: 1px solid #bbb; background: #fff; cursor: pointer; }
+    .btn.primary { background: #1f6feb; color: #fff; border-color: #1f6feb; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .small { font-size: 13px; color: #666; }
+    .progressWrap { width: 100%; height: 10px; background: #eee; border-radius: 999px; overflow: hidden; margin: 6px 0 10px; }
+    .progressBar { height: 100%; width: 0%; background: #1f6feb; }
+    .pill { display: inline-block; padding: 2px 10px; border: 1px solid #ddd; border-radius: 999px; font-size: 12px; color: #555; background: #fafafa; }
+    .radioGroup label { display: block; margin: 6px 0; }
+    .helpBox { background: #f4f8ff; border: 1px solid #cfe3ff; border-radius: 10px; padding: 10px 12px; }
+    .footerHint { margin-top: 8px; font-size: 13px; color: #555; }
+    code { background: #f2f2f2; padding: 1px 6px; border-radius: 6px; }
+  </style>
 </head>
 
 <body>
+  <div class="container">
+    <!-- ===== Intro / Instructions ===== -->
+    <div class="card">
+      <h1>音声変換 主観評価（自然性・話者類似度）</h1>
 
-  <div style="border:1px solid #000000; padding:10px; background:#ffffff;">
-    <h1>音声変換 主観評価（自然性・話者類似度）</h1>
+      <p class="note">
+        このページでは、各項目で <b>2つの音声</b>（ターゲット参照 / 変換後音声）を聴き、
+        <b>変換後音声</b>について <b>自然性</b> と <b>話者類似度</b> を <b>1〜5の5段階</b>で評価します。
+        正解はありません。<b>直感で大丈夫</b>です。
+      </p>
 
-    <h2>実験手順</h2>
-    <ol>
-      <li>名前を入力し、セットリスト（A / B / C）を1つ選択してください。</li>
-      <li>「開始」を押してください。</li>
-      <li>各ページで次の2つを聴いてください：
-        <ul>
-          <li><b>ターゲット話者（参照音声）</b></li>
-          <li><b>変換後音声（評価対象）</b></li>
-        </ul>
-      </li>
-      <li>変換後音声について、以下を<b>5段階</b>で評価してください：
-        <ul>
-          <li><b>自然性</b></li>
-          <li><b>話者類似度</b>（変換後音声がターゲット話者にどれだけ似ているか）</li>
-        </ul>
-      </li>
-      <li>両方の評価を選ぶと「次へ」が押せます。最後は「終了（CSVダウンロード）」を押してください。</li>
-    </ol>
+      <h2>評価方法</h2>
+      <div class="row">
+        <div class="helpBox">
+          <h3>① 自然性（変換後音声）</h3>
+          <ul>
+            <li>音として自然か（ノイズ・歪み・ブツ切れ・不連続さが少ないか）</li>
+            <li>発話として滑らかか（不自然な抑揚、急な音量変化などがないか）</li>
+          </ul>
+          <p class="small">※ 参照音声の自然性は評価しません（参照は「比較の基準」です）。</p>
+        </div>
+        <div class="helpBox">
+          <h3>② 話者類似度（変換後音声 vs ターゲット参照）</h3>
+          <ul>
+            <li>声質・声色が、参照（ターゲット話者）にどれだけ近いか</li>
+            <li>話し方（癖）や響きが似ていると感じるか</li>
+          </ul>
+          <p class="small">※ 内容（言葉の正しさ）より「誰の声に聞こえるか」を重視してください。</p>
+        </div>
+      </div>
 
-    <h2>注意事項</h2>
-    <ul>
-      <li>ヘッドホン／イヤホンの使用を推奨します。</li>
-      <li>実験中はページの更新（リロード）をしないでください。</li>
-      <li>所要時間は目安として20〜30分です。</li>
-      <li>評価は直感で構いません（何度も聴き比べてOKです）。</li>
-    </ul>
-  </div>
+      <h2>実験手順</h2>
+      <ol>
+        <li><b>名前</b>を入力し、<b>セットリスト（A/B/C）</b>を選んでください。</li>
+        <li><b>開始</b>を押すと、評価ページに移動します。</li>
+        <li>各ページで <b>ターゲット参照</b> と <b>変換後音声</b> を聴いてください。何度聞いても大丈夫です。</li>
+        <li><b>自然性</b> と <b>話者類似度</b> を5段階から選ぶと <b>次へ</b> が押せます。</li>
+        <li>最後のページで <b>終了（CSVダウンロード）</b> を押して結果をダウンロードしてください。</li>
+        <li>結果（CSV）は Slack 等のDM、または下記メールアドレス宛に送付してください：<code>yamauchi.ryoga.w2@s.mail.nagoya-u.ac.jp</code></li>
 
-  <script type="text/javascript" src="mos.js"></script>
+      </ol>
 
-  <div id="Display1">
-    <p>お名前（記録用）:<br>
-      <input type="text" id="name" value="">
-    </p>
-
-    <p>セットリスト:<br>
-      <label><input type="radio" name="set" value="A">A</label><br>
-      <label><input type="radio" name="set" value="B">B</label><br>
-      <label><input type="radio" name="set" value="C">C</label><br>
-    </p>
-
-    <p>
-      <button id="next1" onclick="start_experiment()">開始</button>
-    </p>
-
-    <p id="loading" style="display:none;">
-      セットリストを読み込んでいます… 少々お待ちください。
-    </p>
-  </div>
-
-  <div id="Display2" style="display:none;">
-    <p id="page"></p>
-    <!-- sample名は表示しない（バイアス防止） -->
-    <p id="meta" style="color:#666;"></p>
-
-    <div style="border:1px solid #ccc; padding:10px; margin-bottom:10px;">
-      <p id="audio_tgt"></p>
-      <p id="audio_conv"></p>
+      <h2>注意</h2>
+      <ul class="note">
+        <li>この実験はおよそ20〜30分ほどかかります。</li>
+        <li>実験中はページの再読み込みや戻る操作は行わないでください。</li>
+        <li>スマートフォンでは結果をダウンロードできない場合があるのでPCを使用してください。</li>
+        <li>ヘッドホンやイヤホンを着用した状態で行ってください。</li>
+      </ul>
     </div>
 
-    <div style="border:1px solid #ccc; padding:10px; margin-bottom:10px;">
-      <h3>自然性（変換後音声）</h3>
+    <!-- ===== Script ===== -->
+    <script type="text/javascript" src="mos.js"></script>
+
+    <!-- ===== Display1: Start ===== -->
+    <div id="Display1" class="card">
+      <h2>開始</h2>
+
       <p>
-        <label><input type="radio" name="nat" value="1" onclick="evaluation()">1（不自然）</label><br>
-        <label><input type="radio" name="nat" value="2" onclick="evaluation()">2</label><br>
-        <label><input type="radio" name="nat" value="3" onclick="evaluation()">3</label><br>
-        <label><input type="radio" name="nat" value="4" onclick="evaluation()">4</label><br>
-        <label><input type="radio" name="nat" value="5" onclick="evaluation()">5（自然）</label><br>
+        <b>名前</b><br />
+        <input type="text" id="name" value=""  style="width: min(420px, 100%); padding: 10px; border-radius: 10px; border: 1px solid #bbb;">
+        <br><span class="small">※ ダウンロードされるCSVファイル名に使われます</span>
+      </p>
+
+      <p>
+        <b>セットリスト</b><br />
+        <label><input type="radio" name="set" value="A"> A</label><br />
+        <label><input type="radio" name="set" value="B"> B</label><br />
+        <label><input type="radio" name="set" value="C"> C</label><br />
+        <span class="small">※ 指定されたセットを選んでください</span>
+      </p>
+
+      <p>
+        <button class="btn primary" id="next1" onclick="start_experiment()">開始</button>
+      </p>
+
+      <p id="loading" class="pill" style="display:none;">
+        セットリストを読み込んでいます…（数秒かかる場合があります）
+      </p>
+
+      <p class="warn">
+        ※ 開始後は、<b>リロード（更新）や戻る</b>をしないでください。
       </p>
     </div>
 
-    <div style="border:1px solid #ccc; padding:10px; margin-bottom:10px;">
-      <h3>話者類似度（変換後音声 vs ターゲット参照）</h3>
-      <p>
-        <label><input type="radio" name="sim" value="1" onclick="evaluation()">1（似ていない）</label><br>
-        <label><input type="radio" name="sim" value="2" onclick="evaluation()">2</label><br>
-        <label><input type="radio" name="sim" value="3" onclick="evaluation()">3</label><br>
-        <label><input type="radio" name="sim" value="4" onclick="evaluation()">4</label><br>
-        <label><input type="radio" name="sim" value="5" onclick="evaluation()">5（とても似ている）</label><br>
-      </p>
+    <!-- ===== Display2: Evaluation ===== -->
+    <div id="Display2" class="card" style="display:none;">
+      <div class="row" style="align-items:center;">
+        <div>
+          <div class="progressWrap" aria-label="progress">
+            <div id="progressBar" class="progressBar"></div>
+          </div>
+          <div>
+            <span class="pill" id="page"></span>
+            <span class="pill">このページは <b>参照 → 評価対象</b> の順に聴いてください</span>
+          </div>
+        </div>
+        <div style="text-align:right;">
+          <span class="small" id="hintLock">※ 2項目の評価を選ぶと「次へ」が有効になります</span>
+        </div>
+      </div>
+
+      <!-- sample名は表示しない（バイアス防止） -->
+      <p id="meta" class="small" style="margin-top:6px;"></p>
+
+      <div class="helpBox" style="margin-top:12px;">
+        <b>このページでやること</b>
+        <ol style="margin: 8px 0 0 18px;">
+          <li><b>ターゲット話者（参照音声）</b>を聴く</li>
+          <li><b>変換後音声（評価対象）</b>を聴く</li>
+          <li>下の2つを<b>それぞれ1〜5</b>で選ぶ</li>
+        </ol>
+      </div>
+
+      <div style="border:1px solid #ddd; border-radius:12px; padding:12px; margin:12px 0;">
+        <p id="audio_tgt" style="margin-top:0;"></p>
+        <p id="audio_conv" style="margin-bottom:0;"></p>
+      </div>
+
+      <div style="border:1px solid #ddd; border-radius:12px; padding:12px; margin-bottom:12px;">
+        <h3 style="margin-top:0;">自然性（変換後音声）</h3>
+        <p class="small">1: とても不自然（ノイズ/歪み/ブツ切れが目立つ）〜 5: とても自然</p>
+        <div class="radioGroup">
+          <label><input type="radio" name="nat" value="1" onclick="evaluation()"> 1（とても不自然）</label>
+          <label><input type="radio" name="nat" value="2" onclick="evaluation()"> 2（やや不自然）</label>
+          <label><input type="radio" name="nat" value="3" onclick="evaluation()"> 3（どちらとも言えない）</label>
+          <label><input type="radio" name="nat" value="4" onclick="evaluation()"> 4（やや自然）</label>
+          <label><input type="radio" name="nat" value="5" onclick="evaluation()"> 5（とても自然）</label>
+        </div>
+      </div>
+
+      <div style="border:1px solid #ddd; border-radius:12px; padding:12px; margin-bottom:12px;">
+        <h3 style="margin-top:0;">話者類似度（変換後音声 vs ターゲット参照）</h3>
+        <p class="small">1: 全く似ていない 〜 5: とても似ている</p>
+        <div class="radioGroup">
+          <label><input type="radio" name="sim" value="1" onclick="evaluation()"> 1（全く似ていない）</label>
+          <label><input type="radio" name="sim" value="2" onclick="evaluation()"> 2（あまり似ていない）</label>
+          <label><input type="radio" name="sim" value="3" onclick="evaluation()"> 3（どちらとも言えない）</label>
+          <label><input type="radio" name="sim" value="4" onclick="evaluation()"> 4（やや似ている）</label>
+          <label><input type="radio" name="sim" value="5" onclick="evaluation()"> 5（とても似ている）</label>
+        </div>
+      </div>
+
+      <div class="row" style="justify-content: space-between; align-items: center;">
+        <div>
+          <button class="btn" id="prev" onclick="prev()">前へ</button>
+          <button class="btn primary" id="next2" onclick="next()">次へ</button>
+        </div>
+        <div style="text-align:right;">
+          <button class="btn primary" id="finish" onclick="finish()">終了（CSVダウンロード）</button>
+          <div class="footerHint">※ 最後のページでのみ「終了」が押せます</div>
+        </div>
+      </div>
     </div>
-
-    <p>
-      <button id="prev" onclick="prev()">前へ</button>
-      <button id="next2" onclick="next()">次へ</button>
-      <button id="finish" onclick="finish()">終了（CSVダウンロード）</button>
-    </p>
   </div>
-
 </body>
 </html>
