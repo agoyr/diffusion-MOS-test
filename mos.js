@@ -112,11 +112,11 @@ function setAudio() {
 
   // audio
   document.getElementById("audio_tgt").innerHTML =
-    `<b>参照音声（ターゲット話者）</b><br>` +
+    `<b>参照音声</b><br>` +
     `<audio src="${cur.tgt}" controls preload="auto" playsinline controlsList="nodownload"></audio>`;
 
   document.getElementById("audio_conv").innerHTML =
-    `<b>評価音声（変換後音声）</b><br>` +
+    `<b>評価音声</b><br>` +
     `<audio src="${cur.conv}" controls preload="auto" playsinline controlsList="nodownload"></audio>`;
 
   // metaは非表示（system/pair等が見えるとバイアス）
@@ -238,7 +238,11 @@ async function start_experiment() {
     alert("名前を入力してください。");
     return;
   }
-  const name = raw.replaceAll(" ", "_").replace(/[^\w\-]/g, "_"); // 日本語等は _ にする
+  const name = raw
+  .trim()
+  .replace(/\s+/g, "_")                      // 空白は _ に
+  .replace(/[<>:"/\\|?*\u0000-\u001F]/g, "_"); // OS的に危険な文字だけ _
+
 
   let set_key = "";
   const radios = document.getElementsByName("set");
