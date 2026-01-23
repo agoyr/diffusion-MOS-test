@@ -233,15 +233,15 @@ function finish() {
 // ---------- start experiment ----------
 async function start_experiment() {
   // 参加者ID（ファイル名に使うので安全化）
-  const raw = document.getElementById("name").value.trim();
-  if (!raw) {
-    alert("名前を入力してください。");
-    return;
-  }
-  const name = raw
+  const raw = document.getElementById("name").value;
+if (!raw || !raw.trim()) {
+  alert("名前を入力してください。");
+  return;
+}
+const name = raw
   .trim()
-  .replace(/\s+/g, "_")                      // 空白は _ に
-  .replace(/[<>:"/\\|?*\u0000-\u001F]/g, "_"); // OS的に危険な文字だけ _
+  .replace(/\s+/g, "_")
+  .replace(/[<>:"/\\|?*\u0000-\u001F]/g, "_");
 
 
   let set_key = "";
